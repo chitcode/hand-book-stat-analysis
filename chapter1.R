@@ -114,3 +114,27 @@ Forbes2000[Forbes2000$country=="Germany" & Forbes2000$profits < 0,]
 #Ex. 1.3 Which business category are most of the companies situated at the
 #Bermuda island working in?
 sort(table(Forbes2000[Forbes2000$country=="Bermuda","category"]),decreasing=T)
+
+#Ex. 1.4 For the 50 companies in the Forbes data set with the highest profits,
+#plot sales against assets (or some suitable transformation of each variable),
+#labelling each point with the appropriate country name which may need
+#to be abbreviated (using abbreviate) to avoid making the plot look too
+#‘messy’.
+attach(Forbes2000)
+Forbes2000.orderd <- Forbes2000[order(profits,decreasing=T),]
+detach(Forbes2000)
+plot(log(Forbes2000.orderd[1:50,"assets"]),log(Forbes2000.orderd[1:50,"sales"])
+     ,ylab="log(sales)",xlab="log(assets)",main="sales vs assets")
+
+text(x=log(Forbes2000.orderd[1:50,"assets"]),y=log(Forbes2000.orderd[1:50,"sales"]),labels=abbreviate(Forbes2000.orderd$country[1:50]),col="blue",font=1,pos=1)
+
+#plot with ggplot2
+qplot(log(assets),log(sales),data=Forbes2000.orderd[1:50,],color=country)
+
+
+
+# Ex. 1.5 Find the average value of sales for the companies in each country
+# in the Forbes data set, and find the number of companies in each country
+# with profits above 5 billion US dollars.
+Forbes2000.5bilion <- Forbes2000[Forbes2000$profits > 5.0 ,]
+ddply(Forbes2000.5bilion,c("country"),function(df){c(nrow(df),mean(df$sales))})
